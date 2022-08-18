@@ -20,6 +20,7 @@ CurrentStatus = {
     y = 1,
     z = 1,
   },
+  is_near_bedrock = false,
 }
 
 -- the file is used to recover from program stopping due to server restarts or
@@ -32,22 +33,29 @@ local function updateFile(status_file)
   status_file.flush()
 end
 
--- power loss recovery and status file initialization
+-- power loss recovery and status file initialization and usage
 local status_file
 
 if fs.exists("/quarry_status.txt") then
   status_file = fs.open("/quarry_status.txt", "r")
-  CurrentStatus = textutils.unserialize(status_file.ReadAll())
+  CurrentStatus = textutils.unserialize(status_file.readAll())
   status_file.close()
   status_file = fs.open("/quarry_status.txt", "w")
 else
   status_file = fs.open("/quarry_status.txt", "w")
   -- TODO: ask for user input to initialize the quarry
+  write("Desired width: ")
+  CurrentStatus.target_pos.x(read())
+  write("Desired length: ")
+  CurrentStatus.target_pos.z(read())
+  write("Desired depth: ")
+  CurrentStatus.target_pos.y(read())
   updateFile(status_file)
 end
 
-if arg[1] == "debug" then
-  print(textutils.serialize(CurrentStatus))
+local function deleteJob()
+  fs.delete("/quarry_status.txt")
+  os.exit()
 end
 
 -- definition of movement functions
@@ -89,6 +97,7 @@ local function moveForward()
     elseif CurrentStatus.cur_direction == 4 then
       CurrentStatus.pos.y = CurrentStatus.pos.x - 1
     end
+    updateFile()
   else
     --TODO: deal with movement errors
   end
@@ -147,4 +156,38 @@ local function moveTo(x, y, z)
       moveDown()
     end
   end
+end
+
+-- does default mining stuffs while respecting the zone boundaries
+local function mineForward()
+  local is_facing_border = (
+    (
+      CurrentStatus.cur_direction == 1 and CurrentStatus.pos.z == CurrentStatus.target_pos.z
+    ) or (
+      CurrentStatus.cur_direction == 3 and CurrentStatus.pos.z == 1
+    ) or (
+      CurrentStatus.cur_direction == 2 and CurrentStatus.pos.x == CurrentStatus.target_pos.x
+    ) or (
+      CurrentStatus.cur_direction == 4 and CurrentStatus.pos.x == 1
+    )
+  )
+  if not is_facing_border then
+    turtle.dig()
+  end
+  if not CurrentStatus.pos.y == CurrentStatus.target_pos.y then
+    turtle.digDown()
+  end
+  if not CurrentStatus.pos.y == 1 then
+    turtle.digUp()
+  end
+end
+
+if arg[1] == "debug" then
+  print(textutils.serialize(CurrentStatus))
+elseif arg[1] == "test" then
+  moveTo(3, 3, 3)
+  sleep(1)
+  moveTo(1, 1, 1)
+  turnTo(1)
+  deleteJob()
 end
