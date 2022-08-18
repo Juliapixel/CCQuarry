@@ -84,6 +84,7 @@ local function moveUp()
   else
     --TODO: deal with movement errors
   end
+  updateFile()
 end
 
 local function moveDown()
@@ -92,18 +93,19 @@ local function moveDown()
   else
     --TODO: deal with movement errors
   end
+  updateFile()
 end
 
 local function moveForward()
   if turtle.forward() then
     if CurrentStatus.cur_direction == 1 then
-      CurrentStatus.pos.y = CurrentStatus.pos.z + 1
+      CurrentStatus.pos.z = CurrentStatus.pos.z + 1
     elseif CurrentStatus.cur_direction == 2 then
-      CurrentStatus.pos.y = CurrentStatus.pos.x + 1
+      CurrentStatus.pos.x = CurrentStatus.pos.x + 1
     elseif CurrentStatus.cur_direction == 3 then
-      CurrentStatus.pos.y = CurrentStatus.pos.z - 1
+      CurrentStatus.pos.z = CurrentStatus.pos.z - 1
     elseif CurrentStatus.cur_direction == 4 then
-      CurrentStatus.pos.y = CurrentStatus.pos.x - 1
+      CurrentStatus.pos.x = CurrentStatus.pos.x - 1
     end
     updateFile()
   else
@@ -114,14 +116,15 @@ end
 local function moveBackward()
   if turtle.up() then
     if CurrentStatus.cur_direction == 1 then
-      CurrentStatus.pos.y = CurrentStatus.pos.z - 1
+      CurrentStatus.pos.z = CurrentStatus.pos.z - 1
     elseif CurrentStatus.cur_direction == 2 then
-      CurrentStatus.pos.y = CurrentStatus.pos.x - 1
+      CurrentStatus.pos.x = CurrentStatus.pos.x - 1
     elseif CurrentStatus.cur_direction == 3 then
-      CurrentStatus.pos.y = CurrentStatus.pos.z + 1
+      CurrentStatus.pos.z = CurrentStatus.pos.z + 1
     elseif CurrentStatus.cur_direction == 4 then
-      CurrentStatus.pos.y = CurrentStatus.pos.x + 1
+      CurrentStatus.pos.x = CurrentStatus.pos.x + 1
     end
+    updateFile()
   else
     --TODO: deal with movement errors
   end
