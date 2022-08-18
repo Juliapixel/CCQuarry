@@ -45,11 +45,11 @@ else
   status_file = fs.open("/quarry_status.txt", "w")
   -- TODO: ask for user input to initialize the quarry
   write("Desired width: ")
-  CurrentStatus.target_pos.x(read())
+  CurrentStatus.target_pos.x = tonumber(read())
   write("Desired length: ")
-  CurrentStatus.target_pos.z(read())
+  CurrentStatus.target_pos.z = tonumber(read())
   write("Desired depth: ")
-  CurrentStatus.target_pos.y(read())
+  CurrentStatus.target_pos.y = tonumber(read())
   updateFile(status_file)
 end
 
