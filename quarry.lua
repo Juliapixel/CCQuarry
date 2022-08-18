@@ -25,16 +25,13 @@ CurrentStatus = {
 
 -- the file is used to recover from program stopping due to server restarts or
 -- chunk unloading caused by players not being present nearby.
--- it is structured not to be human-readable, but somehow minimally
--- understandable by someone who reads this file.
--- its basic structure is laid out here:
-local function updateFile(status_file)
+-- it is merely a serialization of the CurrentStatus table.
+local status_file
+
+local function updateFile()
   status_file.write(textutils.serialize(CurrentStatus))
   status_file.flush()
 end
-
--- power loss recovery and status file initialization and usage
-local status_file
 
 if fs.exists("/quarry_status.txt") then
   status_file = fs.open("/quarry_status.txt", "r")
@@ -43,14 +40,13 @@ if fs.exists("/quarry_status.txt") then
   status_file = fs.open("/quarry_status.txt", "w")
 else
   status_file = fs.open("/quarry_status.txt", "w")
-  -- TODO: ask for user input to initialize the quarry
   write("Desired width: ")
   CurrentStatus.target_pos.x = tonumber(read())
   write("Desired length: ")
   CurrentStatus.target_pos.z = tonumber(read())
   write("Desired depth: ")
   CurrentStatus.target_pos.y = tonumber(read())
-  updateFile(status_file)
+  updateFile()
 end
 
 local function deleteJob()
