@@ -66,7 +66,7 @@ local function turnTo(direction)
       CurrentStatus.cur_direction = temp_dir
     end
   else
-    for i = 1, delta do
+    for i = 1, math.abs(delta) do
       turtle.turnRight()
       local temp_dir = CurrentStatus.cur_direction + 1
       if temp_dir == 5 then
