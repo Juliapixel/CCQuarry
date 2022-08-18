@@ -59,9 +59,21 @@ local function turnTo(direction)
   local delta  = direction - CurrentStatus.cur_direction
   if delta == -1 or delta == 3 then
     turtle.turnLeft()
+    local temp_dir = CurrentStatus.cur_direction - 1
+    if temp_dir == 0 then
+      CurrentStatus.cur_direction = 4
+    else
+      CurrentStatus.cur_direction = temp_dir
+    end
   else
     for i = 1, delta do
       turtle.turnRight()
+      local temp_dir = CurrentStatus.cur_direction + 1
+      if temp_dir == 5 then
+        CurrentStatus.cur_direction = 1
+      else
+        CurrentStatus.cur_direction = temp_dir
+      end
     end
   end
 end
@@ -121,7 +133,7 @@ local function moveTo(x, y, z)
   local delta_y = y - CurrentStatus.pos.y
   local delta_z = z - CurrentStatus.pos.z
   if delta_y < 0 then
-    for i = 1, math.abs(delta_y), 1 do
+    for i = 1, math.abs(delta_y) do
       moveUp()
     end
   end
@@ -148,7 +160,7 @@ local function moveTo(x, y, z)
     end
   end
   if delta_y > 0 then
-    for i = 1, delta_y, 1 do
+    for i = 1, delta_y do
       moveDown()
     end
   end
